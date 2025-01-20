@@ -1,0 +1,180 @@
+/* Base styles */
+body {
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    margin: 0;
+    padding: 20px;
+    background: #f5f5f5;
+    color: #333;
+    line-height: 1.6;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    background: white;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Typography */
+h1 {
+    color: #1a1a1a;
+    margin-bottom: 30px;
+    text-align: center;
+    font-size: 2.2em;
+}
+
+h2 {
+    color: #2c3e50;
+    margin: 20px 0;
+    font-size: 1.5em;
+}
+
+/* Input sections */
+.input-section {
+    margin: 30px 0;
+    padding: 20px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    border: 1px solid #e9ecef;
+}
+
+.config-inputs {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    min-width: 200px;
+}
+
+label {
+    font-weight: 500;
+    color: #495057;
+}
+
+input, select {
+    padding: 8px 12px;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    font-size: 14px;
+    transition: border-color 0.2s ease;
+}
+
+input:focus, select:focus {
+    outline: none;
+    border-color: #4dabf7;
+    box-shadow: 0 0 0 2px rgba(77, 171, 247, 0.2);
+}
+
+/* Branch inputs */
+.branch-inputs {
+    display: grid;
+    gap: 20px;
+}
+
+.branch-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 15px;
+    padding: 15px;
+    background: white;
+    border-radius: 6px;
+    border: 1px solid #e9ecef;
+}
+
+/* Buttons */
+.primary-button {
+    background: #228be6;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: background-color 0.2s ease;
+}
+
+.primary-button:hover {
+    background: #1c7ed6;
+}
+
+/* Circuit diagram */
+.circuit-container {
+    background: white;
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
+    padding: 20px;
+    margin: 20px 0;
+}
+
+#circuitDiagram {
+    width: 100%;
+    height: 600px;
+    background: white;
+}
+
+/* Analysis controls */
+.analysis-controls {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+}
+
+.law-select {
+    min-width: 200px;
+}
+
+/* Solution steps */
+.solution-steps {
+    margin-top: 30px;
+}
+
+.step {
+    background: white;
+    padding: 20px;
+    margin: 15px 0;
+    border-radius: 8px;
+    border: 1px solid #e9ecef;
+}
+
+.matrix-display {
+    font-family: monospace;
+    white-space: pre;
+    padding: 15px;
+    background: #f8f9fa;
+    border-radius: 4px;
+    overflow-x: auto;
+    margin: 10px 0;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .container {
+        padding: 15px;
+    }
+
+    .config-inputs {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .branch-row {
+        grid-template-columns: 1fr;
+    }
+
+    .analysis-controls {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .law-select {
+        width: 100%;
+    }
+}

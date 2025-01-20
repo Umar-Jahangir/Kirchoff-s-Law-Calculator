@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kirchhoff's Laws Circuit Solver</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Kirchhoff's Laws Circuit Solver</h1>
+        
+        <div class="input-section">
+            <h2>Circuit Configuration</h2>
+            <div class="config-inputs">
+                <div class="input-group">
+                    <label for="numNodes">Number of Nodes:</label>
+                    <input type="number" id="numNodes" min="2" value="3">
+                </div>
+                <div class="input-group">
+                    <label for="numBranches">Number of Branches:</label>
+                    <input type="number" id="numBranches" min="1" value="1" onchange="setupInputs()">
+                </div>
+                <button onclick="setupInputs()" class="primary-button">Setup Circuit</button>
+            </div>
+        </div>
+
+        <div class="input-section">
+            <h2>Branch Information</h2>
+            <div id="branchInputs" class="branch-inputs"></div>
+        </div>
+
+        <div class="circuit-section">
+            <h2>Circuit Diagram</h2>
+            <div class="circuit-container">
+                <svg id="circuitDiagram" viewBox="0 0 800 600"></svg>
+            </div>
+        </div>
+
+        <div class="input-section">
+            <h2>Analysis Options</h2>
+            <div class="analysis-controls">
+                <select id="lawSelect" class="law-select">
+                    <option value="KVL">Kirchhoff's Voltage Law</option>
+                    <option value="KCL">Kirchhoff's Current Law</option>
+                </select>
+                <button onclick="solveCircuit()" class="primary-button">Solve Circuit</button>
+            </div>
+        </div>
+
+        <div id="steps" class="solution-steps"></div>
+    </div>
+
+    <script type="module">
+        import { solveCircuit, collectBranchData } from './solver.js';
+        window.solveCircuit = solveCircuit;
+        window.collectBranchData = collectBranchData;
+    </script>
+    <script src="circuit-diagram.js"></script>
+</body>
+</html>
