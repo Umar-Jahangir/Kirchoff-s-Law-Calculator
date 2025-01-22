@@ -124,13 +124,25 @@ function updateCircuit() {
     const nodes = new Set();
     const branches = document.querySelectorAll('.branch-row');
     branches.forEach(branch => {
-        const fromNode = branch.querySelector('.from-node').value;
-        const toNode = branch.querySelector('.to-node').value;
+        const fromNode = branch.querySelector('.from-node').value.trim();
+        const toNode = branch.querySelector('.to-node').value.trim();
         if (fromNode) nodes.add(fromNode);
         if (toNode) nodes.add(toNode);
     });
     
     const nodePositions = calculateNodePositions([...nodes]);
+    
+    // Group branches by their node pairs
+    const branchMap = {};
+    branches.forEach(branch => {
+        const fromNode = branch.querySelector('.from-node').value.trim();
+        const toNode = branch.querySelector('.to-node').value.trim();
+        if (fromNode && toNode) {
+            const key = [fromNode, toNode].sort().join('-');
+            if (!branchMap[key]) branchMap[key] = [];
+            branchMap[key].push(branch);
+        }
+    });
     
     // Draw nodes
     Object.entries(nodePositions).forEach(([node, pos]) => {
@@ -138,57 +150,72 @@ function updateCircuit() {
         svg.appendChild(nodeElement);
     });
     
-    // Draw branches
-    branches.forEach(branch => {
-        const fromNode = branch.querySelector('.from-node').value;
-        const toNode = branch.querySelector('.to-node').value;
-        const voltage = parseFloat(branch.querySelector('.voltage-input').value);
-        const current = parseFloat(branch.querySelector('.current-input').value);
-        const resistance = parseFloat(branch.querySelector('.resistance-input').value);
+    // Draw branches with aligned components
+    Object.entries(branchMap).forEach(([key, branchList]) => {
+        const [fromNode, toNode] = key.split('-');
+        const start = nodePositions[fromNode];
+        const end = nodePositions[toNode];
         
-        if (fromNode && toNode && nodePositions[fromNode] && nodePositions[toNode]) {
-            const start = nodePositions[fromNode];
-            const end = nodePositions[toNode];
+        branchList.forEach((branch, index) => {
+            const voltage = parseFloat(branch.querySelector('.voltage-input').value) || null;
+            const current = parseFloat(branch.querySelector('.current-input').value) || null;
+            const resistance = parseFloat(branch.querySelector('.resistance-input').value) || null;
+
+            // Calculate dynamic offset
+            const totalBranches = branchList.length;
+            const branchSpacing = 20; // Adjust for more spacing if needed
+            const offset = (index - (totalBranches - 1) / 2) * branchSpacing;
             
-            const angle = Math.atan2(end.y - start.y, end.x - start.x) * 180 / Math.PI;
+            const offsetX = offset * (end.y - start.y) / Math.hypot(end.x - start.x, end.y - start.y);
+            const offsetY = offset * (start.x - end.x) / Math.hypot(end.x - start.x, end.y - start.y);
             
+            const startX = start.x + offsetX;
+            const startY = start.y + offsetY;
+            const endX = end.x + offsetX;
+            const endY = end.y + offsetY;
+
             // Draw wire
             const wire = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-            wire.setAttribute('x1', start.x);
-            wire.setAttribute('y1', start.y);
-            wire.setAttribute('x2', end.x);
-            wire.setAttribute('y2', end.y);
+            wire.setAttribute('x1', startX);
+            wire.setAttribute('y1', startY);
+            wire.setAttribute('x2', endX);
+            wire.setAttribute('y2', endY);
             wire.setAttribute('stroke', 'black');
             svg.appendChild(wire);
-            
-            const midX = (start.x + end.x) / 2;
-            const midY = (start.y + end.y) / 2;
-            
+
+            // Midpoint and angle for alignment
+            const angle = Math.atan2(endY - startY, endX - startX) * (180 / Math.PI);
+
+            // Align resistor
             if (resistance) {
-                const resistor = createCircuitElement('resistor', midX, midY, angle, resistance.toString());
+                const resistor = createCircuitElement('resistor', (startX + endX) / 2, (startY + endY) / 2, angle, resistance.toString());
                 svg.appendChild(resistor);
             }
-            
+
+            // Align voltage source closer to start
             if (voltage) {
-                const voltageSource = createCircuitElement('voltage', 
-                    start.x + (end.x - start.x) * 0.25, 
-                    start.y + (end.y - start.y) * 0.25, 
-                    angle, 
+                const voltageSource = createCircuitElement(
+                    'voltage',
+                    startX + (endX - startX) * 0.25,
+                    startY + (endY - startY) * 0.25,
+                    angle,
                     voltage.toString()
                 );
                 svg.appendChild(voltageSource);
             }
-            
+
+            // Align current arrow closer to end
             if (current) {
-                const currentArrow = createCircuitElement('current', 
-                    start.x + (end.x - start.x) * 0.75, 
-                    start.y + (end.y - start.y) * 0.75, 
-                    angle, 
+                const currentArrow = createCircuitElement(
+                    'current',
+                    startX + (endX - startX) * 0.75,
+                    startY + (endY - startY) * 0.75,
+                    angle,
                     current.toString()
                 );
                 svg.appendChild(currentArrow);
             }
-        }
+        });
     });
 }
 
